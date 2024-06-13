@@ -6,7 +6,6 @@ const path = require('path')
 const formatMessage = require('./utils/messages')
 const cors = require('cors')
 const https = require('https')
-const fs = require('fs')
 
 const {
   userJoin,
