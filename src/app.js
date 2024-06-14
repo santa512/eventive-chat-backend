@@ -16,10 +16,10 @@ const {
 } = require('./utils/users')
 
 const app = express()
-// const options = {
-//   key: fs.readFileSync('./key.pem'),
-//   cert: fs.readFileSync('./cert.pem'),
-// }
+const options = {
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem'),
+}
 // Allow all origins
 app.use(cors())
 
@@ -30,7 +30,7 @@ app.use(
   })
 )
 
-const server = http.createServer(app)
+const server = https.createServer(app)
 const io = socketIo(server, {
   cors: {
     origin: (origin, callback) => {
