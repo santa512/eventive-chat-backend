@@ -66,7 +66,7 @@ app.use((req, res, next) => {
   next()
 })
 
-const botName = 'XeroxChat Bot'
+const botName = 'Double exposure 2024'
 
 // run when client connects
 io.on('connection', (socket) => {
@@ -76,7 +76,7 @@ io.on('connection', (socket) => {
     socket.join(user.room)
 
     // welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to XeroxChat!'))
+    socket.emit('message', formatMessage(botName, 'Double exposure 2024'))
 
     // broadcast when a user connects
     socket.broadcast
