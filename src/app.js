@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 const io = socketIo(server, {
   cors: {
     origin: (origin, callback) => {
-      if (!origin || origin === 'null') {
+      if (!origin || origin === 'https://doubleexposure24.eventive.org') {
         callback(null, true)
       } else {
         callback(new Error('Not allowed by CORS'))
