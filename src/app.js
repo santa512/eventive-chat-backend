@@ -6,6 +6,7 @@ const path = require('path')
 const formatMessage = require('./utils/messages')
 const cors = require('cors')
 const https = require('https')
+const fs = require('fs')
 
 const {
   userJoin,
@@ -17,8 +18,8 @@ const {
 
 const app = express()
 const options = {
-  key: fs.readFileSync('./key.pem'),
-  cert: fs.readFileSync('./cert.pem'),
+  key: fs.readFileSync('./src/key.pem'),
+  cert: fs.readFileSync('./src/cert.pem'),
 }
 // Allow all origins
 app.use(cors())
@@ -30,7 +31,11 @@ app.use(
   })
 )
 
-const server = https.createServer(app)
+const server = http.createServer(app)
+app.get('/', (req, res) => {
+  res.send('Hello, World!')
+})
+
 const io = socketIo(server, {
   cors: {
     origin: (origin, callback) => {
