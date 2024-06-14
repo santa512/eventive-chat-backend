@@ -49,6 +49,17 @@ const io = socketIo(server, {
 
 // set static file
 app.use(express.static(path.join(__dirname, 'public')))
+app.use((req, res, next) => {
+  res.header(
+    'Access-Control-Allow-Origin',
+    'https://doubleexposure24.eventive.org'
+  )
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  )
+  next()
+})
 
 const botName = 'XeroxChat Bot'
 
