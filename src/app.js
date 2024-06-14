@@ -28,6 +28,15 @@ app.use(cors())
 app.use(
   cors({
     origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: [
+      'Content-Type',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Allow-Methods',
+      'Access-Control-Allow-Origin',
+      'X-Requested-With',
+      'Accept',
+    ],
   })
 )
 
@@ -40,7 +49,7 @@ const io = socketIo(server, {
   cors: {
     origin: 'https://doubleexposure24.eventive.org',
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type', 'Access-Control-Allow-Methods'],
     credentials: true,
   },
 })
@@ -52,7 +61,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
   res.header(
     'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, access-control-allow-methods'
+    'Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Methods'
   )
   next()
 })
