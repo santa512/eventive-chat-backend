@@ -27,7 +27,7 @@ app.use(cors())
 // Allow specific origin(s)
 app.use(
   cors({
-    origin: '*',
+    origin: 'https://doubleexposure24.eventive.org',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: [
       'Content-Type',
@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 
 const io = socketIo(server, {
   cors: {
-    origin: '*',
+    origin: 'https://doubleexposure24.eventive.org',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Access-Control-Allow-Methods'],
     credentials: true,
