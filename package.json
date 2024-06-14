@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/app.js",
+    "prebuild": "npm ls && echo 'All dependencies installed correctly'",
     "build": "webpack --config webpack.config.js"
   },
   "keywords": [],
