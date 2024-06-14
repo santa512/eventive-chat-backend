@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 
 const io = socketIo(server, {
   cors: {
-    origin: 'https://doubleexposure24.eventive.org',
+    origin: '*',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Access-Control-Allow-Methods'],
     credentials: true,
