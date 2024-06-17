@@ -18,6 +18,12 @@ const {
 } = require('./utils/users')
 
 const app = express()
+const MessageSchema = new mongoose.Schema({
+  username: String,
+  message: String,
+  room: String,
+  timestamp: { type: Date, default: Date.now },
+})
 const Message = mongoose.model('Message', MessageSchema)
 mongoose
   .connect(
@@ -30,12 +36,6 @@ mongoose
   )
   .then(() => {
     console.log('MongoDB Connected...')
-    const MessageSchema = new mongoose.Schema({
-      username: String,
-      message: String,
-      room: String,
-      timestamp: { type: Date, default: Date.now },
-    })
   })
   .catch((err) => console.log(err))
 
