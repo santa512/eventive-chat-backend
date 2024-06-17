@@ -20,9 +20,9 @@ const {
 const app = express()
 const MessageSchema = new mongoose.Schema({
   username: String,
-  message: String,
+  text: String,
   room: String,
-  timestamp: { type: Date, default: Date.now },
+  time: { type: Date, default: Date.now },
 })
 const Message = mongoose.model('Message', MessageSchema)
 mongoose
