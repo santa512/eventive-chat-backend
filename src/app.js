@@ -7,6 +7,7 @@ const formatMessage = require('./utils/messages')
 const cors = require('cors')
 const https = require('https')
 const fs = require('fs')
+const mongoose = require('mongoose')
 
 const {
   userJoin,
@@ -17,10 +18,29 @@ const {
 } = require('./utils/users')
 
 const app = express()
-const options = {
-  key: fs.readFileSync('./src/key.pem'),
-  cert: fs.readFileSync('./src/cert.pem'),
-}
+
+mongoose
+  .connect(
+    'mongodb+srv://dxfest24:8PqL84vxeHk0KXaA@cluster0.rwbftx9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => {
+    console.log('MongoDB Connected...')
+    const MessageSchema = new mongoose.Schema({
+      username: String,
+      message: String,
+      room: String,
+      timestamp: { type: Date, default: Date.now },
+    })
+
+    const Message = mongoose.model('Message', MessageSchema)
+    module.exports = Message
+  })
+  .catch((err) => console.log(err))
+
 // Allow all origins
 app.use(cors())
 
@@ -73,6 +93,14 @@ io.on('connection', (socket) => {
   socket.on('joinRoom', ({ username, room }) => {
     const user = userJoin(socket.id, username, room)
 
+    // Query the database for the message history of the room
+    Message.find({ room: user.room }, (err, messages) => {
+      if (err) return console.error(err)
+
+      // Send the message history to the client
+      socket.emit('messageHistory', messages)
+    })
+
     socket.join(user.room)
 
     // welcome current user
@@ -97,6 +125,18 @@ io.on('connection', (socket) => {
   // listen for chatMessage
   socket.on('chatMessage', (msg) => {
     const user = getCurrentUser(socket.id)
+
+    const messageDocument = new Message({
+      username: user.username,
+      message: msg,
+      room: user.room,
+    })
+
+    // Save the message document to the database
+    messageDocument.save((err) => {
+      if (err) return console.error(err)
+    })
+
     io.to(user.room).emit('message', formatMessage(user.username, msg))
   })
 
