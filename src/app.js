@@ -25,6 +25,8 @@ mongoose
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
+      ssl: true,
     }
   )
   .then(() => {
@@ -41,6 +43,17 @@ mongoose
   })
   .catch((err) => console.log(err))
 
+mongoose.connection.on('connected', function () {
+  console.log('Mongoose default connection open')
+})
+
+mongoose.connection.on('error', function (err) {
+  console.log('Mongoose default connection error: ' + err)
+})
+
+mongoose.connection.on('disconnected', function () {
+  console.log('Mongoose default connection disconnected')
+})
 // Allow all origins
 app.use(cors())
 
@@ -104,7 +117,10 @@ io.on('connection', (socket) => {
     socket.join(user.room)
 
     // welcome current user
-    socket.emit('message', formatMessage(botName, 'Double exposure 2024'))
+    socket.emit(
+      'message',
+      formatMessage(botName, 'Welcome to Double exposure 2024!')
+    )
 
     // broadcast when a user connects
     socket.broadcast
