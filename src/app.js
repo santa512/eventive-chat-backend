@@ -25,7 +25,6 @@ mongoose
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
       ssl: true,
     }
   )
