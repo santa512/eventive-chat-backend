@@ -170,6 +170,8 @@ io.on('connection', (socket) => {
   //send initial message history
   socket.on('getMessageHistory', ({ room }) => {
     Message.find({ room: room })
+      .sort({ time: -1 }) // Sort messages by time in descending order
+      .limit(10) // Limit the number of messages to 10
       .then((messages) => {
         socket.emit('messageHistory', messages)
       })
@@ -186,7 +188,7 @@ io.on('connection', (socket) => {
       .limit(10) // Limit the number of messages to 10
       .then((messages) => {
         // Send the messages in reverse order so the oldest message comes first
-        socket.emit('moreMessageHistory', messages.reverse())
+        socket.emit('moreMessageHistory', messages)
       })
       .catch((err) => {
         console.error(err)
