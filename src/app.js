@@ -137,13 +137,15 @@ io.on('connection', (socket) => {
     })
     console.log('---message::' + messageDocument)
     // Save the message document to the database
-    messageDocument.save((err) => {
-      console.log('---message-save')
-      if (err) return console.error(err)
-      console.log('---message-saved')
-    })
-    console.log('--save-successed')
-    io.to(user.room).emit('message', formatMessage(user.username, msg))
+    messageDocument
+      .save()
+      .then(() => {
+        console.log('---message-saved')
+        io.to(user.room).emit('message', formatMessage(user.username, msg))
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   })
 
   // runs when clients disconnects
