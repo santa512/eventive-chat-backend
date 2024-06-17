@@ -168,12 +168,13 @@ io.on('connection', (socket) => {
 
   socket.on('getMessageHistory', ({ room }) => {
     Message.find({ room: room })
-    .then((messages) => {
-      socket.emit('messageHistory', messages)
-    })
-    .catch((err) => {
-      console.error(err)
-    })
+      .then((messages) => {
+        socket.emit('messageHistory', messages)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+  })
 })
 
 const PORT = process.env.PORT || 443
