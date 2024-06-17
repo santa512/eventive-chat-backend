@@ -129,18 +129,20 @@ io.on('connection', (socket) => {
   // listen for chatMessage
   socket.on('chatMessage', (msg) => {
     const user = getCurrentUser(socket.id)
-
+    console.log('---chatMessage---')
     const messageDocument = new Message({
       username: user.username,
       message: msg,
       room: user.room,
     })
-
+    console.log('---message::' + messageDocument)
     // Save the message document to the database
     messageDocument.save((err) => {
+      console.log('---message-save')
       if (err) return console.error(err)
+      console.log('---message-saved')
     })
-
+    console.log('--save-successed')
     io.to(user.room).emit('message', formatMessage(user.username, msg))
   })
 
