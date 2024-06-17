@@ -132,8 +132,9 @@ io.on('connection', (socket) => {
     console.log('---chatMessage---')
     const messageDocument = new Message({
       username: user.username,
-      message: msg,
+      text: msg,
       room: user.room,
+      time: Date.now(), // Add timestamp property with current timestamp
     })
     console.log('---message::' + messageDocument)
     // Save the message document to the database
