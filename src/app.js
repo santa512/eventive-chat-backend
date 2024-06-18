@@ -9,7 +9,7 @@ const cors = require('cors')
 
 const mongoose = require('mongoose')
 const Message = require('./models/messages')
-const User = require('./models/users')
+const router = require('./routes/routes')
 
 const {
   userJoin,
@@ -19,9 +19,15 @@ const {
   getAttendees,
 } = require('./utils/users')
 
-const { addUser, fetchUserlist } = require('./services/userService')
+const { fetchUserlist } = require('./services/userService')
 
 const app = express()
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(express.json())
+app.use('/', router)
 mongoose
   .connect(process.env.DB_HOST, {
     useNewUrlParser: true,
@@ -65,9 +71,6 @@ app.use(
 )
 
 const server = http.createServer(app)
-app.get('/', (req, res) => {
-  res.send('Hello, World!')
-})
 
 const io = socketIo(server, {
   cors: {
@@ -79,7 +82,8 @@ const io = socketIo(server, {
 })
 
 // set static file
-app.use(express.static(path.join(__dirname, 'public')))
+// app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.json())
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')

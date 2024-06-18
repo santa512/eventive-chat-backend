@@ -11,11 +11,39 @@ const config = {
 
 async function addUser(userData) {
   try {
-    const newUser = new User(userData)
-    await newUser.save()
+    const {
+      userId,
+      username,
+      userEmail,
+      status = 'offline',
+      shareInfo = 'true',
+    } = userData
+    const newUser = new User({ userId, username, userEmail, status, shareInfo })
+    const user = await findUserById(userId)
+    if (!user) await newUser.save()
+    else {
+      console.log('User already existed')
+      return false
+    }
     console.log('User added successfully')
+    return true
   } catch (error) {
     console.error('Error adding user:', error)
+    return false
+  }
+}
+
+async function findUserById(userId) {
+  try {
+    const user = await User.findOne({ userId: userId })
+    if (user) {
+      return user
+    } else {
+      console.log('No user found with the provided userId')
+      return null
+    }
+  } catch (error) {
+    console.error('Error finding user:', error)
   }
 }
 
@@ -53,7 +81,58 @@ async function fetchUserlist() {
   }
 }
 
+async function getAllUsers() {
+  try {
+    const users = await User.find()
+    return users
+  } catch (error) {
+    console.error('Error fetching users:', error)
+  }
+}
+
+async function updateUserStatus(userId, status) {
+  try {
+    const user = await findUserById(userId)
+    if (!user) return false
+
+    await User.updateOne({ _id: user._id }, { $set: { status: status } })
+    return true
+  } catch (error) {
+    console.error('Error updating user status:', error)
+    return false
+  }
+}
+
+async function updateUserPrivacy(userId, shareInfo) {
+  try {
+    const user = await findUserById(userId)
+    if (!user) return false
+
+    await User.updateOne({ _id: user._id }, { $set: { shareInfo: shareInfo } })
+    return true
+  } catch (error) {
+    console.error('Error updating user privacy:', error)
+    return false
+  }
+}
+
+async function deleteUser(userId) {
+  try {
+    await User.findByIdAndDelete(userId)
+    console.log('User deleted successfully')
+    return true
+  } catch (error) {
+    console.error('Error deleting user:', error)
+    return false
+  }
+}
+
 module.exports = {
   addUser,
   fetchUserlist,
+  findUserById,
+  getAllUsers,
+  updateUserStatus,
+  updateUserPrivacy,
+  deleteUser,
 }
