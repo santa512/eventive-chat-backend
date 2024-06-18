@@ -5,9 +5,9 @@ const socketIo = require('socket.io')
 const path = require('path')
 const formatMessage = require('./utils/messages')
 const cors = require('cors')
-const https = require('https')
-const fs = require('fs')
 const mongoose = require('mongoose')
+const Message = require('./models/messages')
+const User = require('./models/users')
 
 const {
   userJoin,
@@ -18,13 +18,6 @@ const {
 } = require('./utils/users')
 
 const app = express()
-const MessageSchema = new mongoose.Schema({
-  username: String,
-  text: String,
-  room: String,
-  time: { type: Date, default: () => new Date().toLocaleString() },
-})
-const Message = mongoose.model('Message', MessageSchema)
 mongoose
   .connect(
     'mongodb+srv://dxfest24:8PqL84vxeHk0KXaA@cluster0.rwbftx9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
