@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema(
     username: { type: String, required: true },
     userEmail: { type: String, required: true },
     status: { type: String, enum: ['online', 'offline'], default: 'offline' },
+    shareInfo: { type: Boolean, default: true },
     // add other fields as needed
   },
   { timestamps: true }

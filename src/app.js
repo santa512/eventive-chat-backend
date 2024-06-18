@@ -1,10 +1,12 @@
 // dependencies
+require('dotenv').config()
 const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io')
 const path = require('path')
 const formatMessage = require('./utils/messages')
 const cors = require('cors')
+
 const mongoose = require('mongoose')
 const Message = require('./models/messages')
 const User = require('./models/users')
@@ -17,18 +19,18 @@ const {
   getAttendees,
 } = require('./utils/users')
 
+const { addUser, fetchUserlist } = require('./services/userService')
+
 const app = express()
 mongoose
-  .connect(
-    'mongodb+srv://dxfest24:8PqL84vxeHk0KXaA@cluster0.rwbftx9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      ssl: true,
-    }
-  )
+  .connect(process.env.DB_HOST, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    ssl: true,
+  })
   .then(() => {
     console.log('MongoDB Connected...')
+    fetchUserlist()
   })
   .catch((err) => console.log(err))
 

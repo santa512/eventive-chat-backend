@@ -1,3 +1,4 @@
+const { addUser, fetchUserlist } = require('../services/userService')
 const users = []
 let attendees = []
 
