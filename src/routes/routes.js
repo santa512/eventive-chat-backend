@@ -6,6 +6,9 @@ router.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+// --- User action beginning ---
+
+// get all ordered users
 router.get('/users', async (req, res) => {
   try {
     res.json(await userService.getAllUsers())
@@ -14,6 +17,7 @@ router.get('/users', async (req, res) => {
   }
 })
 
+// get user by userId
 router.get('/users/:userId', async (req, res) => {
   try {
     res.status(200).json(await userService.findUserById(req.params.userId))
@@ -22,6 +26,7 @@ router.get('/users/:userId', async (req, res) => {
   }
 })
 
+// fetch user list from Eventive
 router.get('/userlist', async (req, res) => {
   try {
     res.json(await userService.fetchUserlist())
@@ -30,9 +35,9 @@ router.get('/userlist', async (req, res) => {
   }
 })
 
+// add user
 router.post('/adduser', async (req, res) => {
   try {
-    console.log('!!!!')
     await userService.addUser(req.body)
     res.status(200).send('User added successfully')
   } catch (error) {
@@ -50,5 +55,11 @@ router.post('/updatestatus/:userId/', async (req, res) => {
     res.status(200).send('User privacy updated successfully')
   }
 })
+
+// --- User action nding ---
+
+// --- Message action beginning ---
+
+// --- Message action ending ---
 
 module.exports = router

@@ -3,7 +3,6 @@ require('dotenv').config()
 const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io')
-const path = require('path')
 const formatMessage = require('./utils/messages')
 const cors = require('cors')
 
@@ -28,6 +27,8 @@ app.use(express.urlencoded({ extended: false }))
 // parse application/json
 app.use(express.json())
 app.use('/', router)
+
+//database connect
 mongoose
   .connect(process.env.DB_HOST, {
     useNewUrlParser: true,
@@ -40,24 +41,13 @@ mongoose
   })
   .catch((err) => console.log(err))
 
-mongoose.connection.on('connected', function () {
-  console.log('Mongoose default connection open')
-})
-
-mongoose.connection.on('error', function (err) {
-  console.log('Mongoose default connection error: ' + err)
-})
-
-mongoose.connection.on('disconnected', function () {
-  console.log('Mongoose default connection disconnected')
-})
 // Allow all origins
 app.use(cors())
 
 // Allow specific origin(s)
 app.use(
   cors({
-    origin: 'https://doubleexposure24.eventive.org',
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: [
       'Content-Type',
@@ -74,7 +64,7 @@ const server = http.createServer(app)
 
 const io = socketIo(server, {
   cors: {
-    origin: 'https://doubleexposure24.eventive.org',
+    origin: '*',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Access-Control-Allow-Methods'],
     credentials: true,
@@ -83,7 +73,7 @@ const io = socketIo(server, {
 
 // set static file
 // app.use(express.static(path.join(__dirname, 'public')))
-app.use(express.json())
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
@@ -129,6 +119,7 @@ io.on('connection', (socket) => {
   socket.on('chatMessage', (msg) => {
     const user = getCurrentUser(socket.id)
     console.log('---chatMessage---')
+
     const messageDocument = new Message({
       username: user.username,
       text: msg,
