@@ -187,7 +187,6 @@ io.on('connection', (socket) => {
       .skip(count) // Skip the messages that have already been sent
       .limit(10) // Limit the number of messages to 10
       .then((messages) => {
-        // Send the messages in reverse order so the oldest message comes first
         socket.emit('moreMessageHistory', messages)
       })
       .catch((err) => {
