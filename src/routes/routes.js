@@ -63,22 +63,21 @@ router.post('/updatestatus/:userId/', async (req, res) => {
 router.post('/messages', async (req, res) => {
   try {
     await messageService.addMessage(req.body)
-    consol.log('add message' + req.body)
     res.status(200).send('Message added successfully')
   } catch (error) {
     res.status(500).send(error)
   }
 })
 
-router.get('/messages/:senderId/:receiveId/:count', async (req, res) => {
+router.get('/messages', async (req, res) => {
+  const senderId = req.query.senderId
+  const receiverId = req.query.receiverId
+  const count = req.query.count
   try {
     res.json(
-      await messageService.getPrivateMessages(
-        req.params.senderId,
-        req.params.receiverId,
-        req.params.count
-      )
+      await messageService.getPrivateMessage(senderId, receiverId, count)
     )
+    console.log('From:' + senderId + ' To' + receiverId + ' Count' + count)
   } catch (error) {
     res.status(500).send(error)
   }

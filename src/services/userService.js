@@ -22,10 +22,8 @@ async function addUser(userData) {
     const user = await findUserById(userId)
     if (!user) await newUser.save()
     else {
-      console.log('User already existed')
       return false
     }
-    console.log('User added successfully')
     return true
   } catch (error) {
     console.error('Error adding user:', error)
@@ -39,7 +37,6 @@ async function findUserById(userId) {
     if (user) {
       return user
     } else {
-      console.log('No user found with the provided userId')
       return null
     }
   } catch (error) {
@@ -128,7 +125,6 @@ async function updateUserPrivacy(userId, shareInfo) {
 async function deleteUser(userId) {
   try {
     await User.findByIdAndDelete(userId)
-    console.log('User deleted successfully')
     return true
   } catch (error) {
     console.error('Error deleting user:', error)
