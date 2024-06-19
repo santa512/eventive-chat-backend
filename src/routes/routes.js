@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const userService = require('../services/userService')
+const messageService = require('../services/messageService')
 
 router.get('/', (req, res) => {
   res.send('Hello World!')
@@ -11,7 +12,7 @@ router.get('/', (req, res) => {
 // get all ordered users
 router.get('/users', async (req, res) => {
   try {
-    res.json(await userService.getAllUsers())
+    res.json(await userService.getPublicUsers())
   } catch (error) {
     res.status(500).send(error)
   }
@@ -56,10 +57,32 @@ router.post('/updatestatus/:userId/', async (req, res) => {
   }
 })
 
-// --- User action nding ---
+// --- User action ending ---
 
 // --- Message action beginning ---
+router.post('/messages', async (req, res) => {
+  try {
+    await messageService.addMessage(req.body)
+    consol.log('add message' + req.body)
+    res.status(200).send('Message added successfully')
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
 
+router.get('/messages/:senderId/:receiveId/:count', async (req, res) => {
+  try {
+    res.json(
+      await messageService.getPrivateMessages(
+        req.params.senderId,
+        req.params.receiverId,
+        req.params.count
+      )
+    )
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
 // --- Message action ending ---
 
 module.exports = router

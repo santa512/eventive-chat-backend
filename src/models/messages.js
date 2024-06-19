@@ -1,11 +1,9 @@
 const mongoose = require('mongoose')
 
 const MessageSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
-  username: { type: String, required: true },
+  sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   text: { type: String },
-  room: { type: String },
-  target: { type: String },
   time: { type: Date, default: () => new Date().toLocaleString() },
 })
 

@@ -90,6 +90,15 @@ async function getAllUsers() {
   }
 }
 
+async function getPublicUsers() {
+  try {
+    const users = await User.find({ shareInfo: true })
+    return users
+  } catch (error) {
+    console.error('Error fetching public users:', error)
+  }
+}
+
 async function updateUserStatus(userId, status) {
   try {
     const user = await findUserById(userId)
@@ -132,6 +141,7 @@ module.exports = {
   fetchUserlist,
   findUserById,
   getAllUsers,
+  getPublicUsers,
   updateUserStatus,
   updateUserPrivacy,
   deleteUser,
