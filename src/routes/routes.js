@@ -19,9 +19,9 @@ router.get('/users', async (req, res) => {
 })
 
 // get user by userId
-router.get('/users/:userId', async (req, res) => {
+router.get('/user', async (req, res) => {
   try {
-    res.status(200).json(await userService.findUserById(req.params.userId))
+    res.status(200).json(await userService.findUserById(req.query.userId))
   } catch (error) {
     res.status(500).send(error)
   }
