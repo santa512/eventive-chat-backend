@@ -71,8 +71,9 @@ app.use('/', router)
 
 io.on('connection', (socket) => {
   socket.on('joinRoom', ({ userId }) => {
+    const chatId = userId
+    socket.join(chatId)
     userService.updateUserStatus(userId, 'online')
-    console.log('user joined : ' + userId)
     socket.broadcast.emit('userStateChange', {
       userId: userId,
       status: 'online',
@@ -87,11 +88,12 @@ io.on('connection', (socket) => {
       })
     })
   })
-  socket.on('joinPrivateChat', ({ senderId, receiverId }) => {
-    const chatId = [senderId, receiverId].sort().join('_')
-    socket.join(chatId)
-    userService.updateUserStatus(senderId, 'online')
-  })
+  // socket.on('joinPrivateChat', ({ senderId, receiverId }) => {
+  //   // const chatId = [senderId, receiverId].sort().join('_')
+  //   const chatId = senderId;
+  //   socket.join(chatId)
+  //   userService.updateUserStatus(senderId, 'online')
+  // })
   socket.on('changePrivacy', ({ userId, shareInfo }) => {
     userService.updateUserPrivacy(userId, shareInfo)
     socket.broadcast.emit('userStateChange', {
@@ -100,12 +102,13 @@ io.on('connection', (socket) => {
     })
   })
   socket.on('sendMessage', (msg) => {
-    const chatId = [msg.sender, msg.receiver].sort().join('_')
+    // const chatId = [msg.sender, msg.receiver].sort().join('_')
     // Save the message document to the database
     messageService
       .addMessage(msg)
       .then(() => {
-        io.to(chatId).emit('message', msg)
+        io.to(msg.receiver).emit('message', msg)
+        io.to(msg.sender).emit('message', msg)
       })
       .catch((err) => {
         console.error(err)
