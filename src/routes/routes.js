@@ -18,6 +18,15 @@ router.get('/users', async (req, res) => {
   }
 })
 
+// get sorted user list
+router.get('/sortedusers', async (req, res) => {
+  try {
+    res.json(await messageService.getUsersSortedByLastMessage(req.query.userId))
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
 // get user by userId
 router.get('/user', async (req, res) => {
   try {
@@ -77,7 +86,6 @@ router.get('/messages', async (req, res) => {
     res.json(
       await messageService.getPrivateMessage(senderId, receiverId, count)
     )
-    console.log('From:' + senderId + ' To' + receiverId + ' Count' + count)
   } catch (error) {
     res.status(500).send(error)
   }
