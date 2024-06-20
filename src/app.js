@@ -62,8 +62,15 @@ const server = http.createServer(app)
 const io = socketIo(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Access-Control-Allow-Methods'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: [
+      'Content-Type',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Allow-Methods',
+      'Access-Control-Allow-Origin',
+      'X-Requested-With',
+      'Accept',
+    ],
     credentials: true,
   },
 })
