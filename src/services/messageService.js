@@ -26,6 +26,15 @@ async function getPrivateMessage(senderId, receiverId, count = 0, limit = 10) {
     .limit(limit)
 }
 
+async function getTotalMessageCount(senderId, receiverId) {
+  return Message.countDocuments({
+    $or: [
+      { sender: senderId, receiver: receiverId },
+      { sender: receiverId, receiver: senderId },
+    ],
+  })
+}
+
 async function removeMessage() {
   try {
     // Add code for removing a message
@@ -109,4 +118,5 @@ module.exports = {
   getAllMessages,
   getPrivateMessage,
   getUsersSortedByLastMessage,
+  getTotalMessageCount,
 }

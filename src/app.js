@@ -3,19 +3,10 @@ require('dotenv').config()
 const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io')
-const formatMessage = require('./utils/messages')
 const cors = require('cors')
 
 const mongoose = require('mongoose')
 const router = require('./routes/routes')
-
-const {
-  userJoin,
-  getCurrentUser,
-  userLeave,
-  getRoomUsers,
-  getAttendees,
-} = require('./utils/users')
 
 const userService = require('./services/userService')
 const messageService = require('./services/messageService')
@@ -55,7 +46,6 @@ app.use(
     ],
   })
 )
-app.use('/', router)
 
 const server = http.createServer(app)
 
@@ -75,6 +65,7 @@ const io = socketIo(server, {
   },
 })
 
+app.use('/', router)
 // set static file
 // app.use(express.static(path.join(__dirname, 'public')))
 

@@ -90,6 +90,16 @@ router.get('/messages', async (req, res) => {
     res.status(500).send(error)
   }
 })
+
+router.get('/messagecount', async (req, res) => {
+  const senderId = req.query.senderId
+  const receiverId = req.query.receiverId
+  try {
+    res.json(await messageService.getTotalMessageCount(senderId, receiverId))
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
 // --- Message action ending ---
 
 module.exports = router
