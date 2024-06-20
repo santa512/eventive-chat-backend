@@ -88,7 +88,6 @@ io.on('connection', (socket) => {
     })
   })
   socket.on('joinPrivateChat', ({ senderId, receiverId }) => {
-    // Create a unique identifier for the chat between two users
     const chatId = [senderId, receiverId].sort().join('_')
     socket.join(chatId)
     userService.updateUserStatus(senderId, 'online')
