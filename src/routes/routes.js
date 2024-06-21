@@ -48,7 +48,13 @@ router.get('/userlist', async (req, res) => {
 // add user
 router.post('/adduser', async (req, res) => {
   try {
-    await userService.fetchUserlist()
+    // await userService.fetchUserlist()
+    console.log(JSON.stringify(req.body))
+    await userService.addUser({
+      userId: req.body.userId,
+      username: req.body.username,
+      userEmail: req.body.userEmail,
+    })
     res.status(200).send('User added successfully')
   } catch (error) {
     res.status(500).send(error)

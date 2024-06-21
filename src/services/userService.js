@@ -16,9 +16,17 @@ async function addUser(userData) {
       username,
       userEmail,
       status = 'offline',
-      shareInfo = 'true',
+      shareInfo = true,
+      setInit = false,
     } = userData
-    const newUser = new User({ userId, username, userEmail, status, shareInfo })
+    const newUser = new User({
+      userId,
+      username,
+      userEmail,
+      status,
+      shareInfo,
+      setInit,
+    })
     const user = await findUserById(userId)
     if (!user) await newUser.save()
     else {
