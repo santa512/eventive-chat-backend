@@ -48,7 +48,7 @@ router.get('/userlist', async (req, res) => {
 // add user
 router.post('/adduser', async (req, res) => {
   try {
-    await userService.addUser(req.body)
+    await userService.fetchUserlist()
     res.status(200).send('User added successfully')
   } catch (error) {
     res.status(500).send(error)
