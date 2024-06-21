@@ -132,6 +132,19 @@ async function deleteUser(userId) {
   }
 }
 
+async function setInitstatus(userId) {
+  try {
+    const user = await findUserById(userId)
+    if (!user) return false
+
+    await User.updateOne({ _id: user._id }, { $set: { setInit: true } })
+    return true
+  } catch (error) {
+    console.error('Error setting user init status:', error)
+    return false
+  }
+}
+
 module.exports = {
   addUser,
   fetchUserlist,
@@ -141,4 +154,5 @@ module.exports = {
   updateUserStatus,
   updateUserPrivacy,
   deleteUser,
+  setInitstatus,
 }

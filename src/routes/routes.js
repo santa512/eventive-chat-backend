@@ -102,4 +102,13 @@ router.get('/messagecount', async (req, res) => {
 })
 // --- Message action ending ---
 
+router.post('/userinit', async (req, res) => {
+  try {
+    await userService.setInitstatus(req.query.userId)
+    res.status(200).send('User init status updated successfully')
+  } catch (error) {
+    res.status(500).status(error)
+  }
+})
+
 module.exports = router
