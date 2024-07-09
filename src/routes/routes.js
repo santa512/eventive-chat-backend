@@ -48,8 +48,6 @@ router.get('/userlist', async (req, res) => {
 // add user
 router.post('/adduser', async (req, res) => {
   try {
-    // await userService.fetchUserlist()
-    console.log(JSON.stringify(req.body))
     await userService.addUser({
       userId: req.body.userId,
       username: req.body.username,
@@ -72,6 +70,14 @@ router.post('/updatestatus/:userId/', async (req, res) => {
   }
 })
 
+router.post('/userinit', async (req, res) => {
+  try {
+    await userService.setInitstatus(req.query.userId)
+    res.status(200).send('User init status updated successfully')
+  } catch (error) {
+    res.status(500).status(error)
+  }
+})
 // --- User action ending ---
 
 // --- Message action beginning ---
@@ -107,14 +113,5 @@ router.get('/messagecount', async (req, res) => {
   }
 })
 // --- Message action ending ---
-
-router.post('/userinit', async (req, res) => {
-  try {
-    await userService.setInitstatus(req.query.userId)
-    res.status(200).send('User init status updated successfully')
-  } catch (error) {
-    res.status(500).status(error)
-  }
-})
 
 module.exports = router

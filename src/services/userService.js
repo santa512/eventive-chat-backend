@@ -15,6 +15,7 @@ async function addUser(userData) {
       userId,
       username,
       userEmail,
+      phoneNumber = null,
       status = 'offline',
       shareInfo = true,
       setInit = false,
@@ -26,6 +27,7 @@ async function addUser(userData) {
       status,
       shareInfo,
       setInit,
+      phoneNumber,
     })
     const user = await findUserById(userId)
     if (!user) await newUser.save()
@@ -68,7 +70,7 @@ async function fetchUserlist() {
           .map((order) => order.person)
       ),
     ]
-
+    
     // filter repeated users
     const uniqueUserlist = Array.from(
       new Set(userlist.map((user) => JSON.stringify(user)))
@@ -79,6 +81,7 @@ async function fetchUserlist() {
         userId: user.id,
         username: user.details.name,
         userEmail: user.details.email,
+        phoneNumber: user.details.phone_number,
       })
     }
   } catch (error) {

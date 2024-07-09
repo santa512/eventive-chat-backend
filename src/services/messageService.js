@@ -43,9 +43,9 @@ async function removeMessage() {
   }
 }
 async function getMessageHistory() {
-  return Message.find({})
   try {
     // Add code for getting message history
+    return Message.find({})
   } catch (error) {
     console.error(error)
   }
@@ -113,10 +113,10 @@ async function getUsersSortedByLastMessage(userId) {
 
 module.exports = {
   addMessage,
-  removeMessage,
-  getMessageHistory,
-  getAllMessages,
+  removeMessage, //not used
+  getMessageHistory, //not used
+  getAllMessages, //not used
   getPrivateMessage,
-  getUsersSortedByLastMessage,
+  getUsersSortedByLastMessage,  //incomplete
   getTotalMessageCount,
 }

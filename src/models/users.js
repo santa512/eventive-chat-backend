@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema(
     userId: { type: String, required: true, unique: true },
     username: { type: String, required: true },
     userEmail: { type: String, required: true },
+    phoneNumber: {type: String, required: false },
     status: { type: String, enum: ['online', 'offline'], default: 'offline' },
     shareInfo: { type: Boolean, default: true },
     setInit: { type: Boolean, default: false },

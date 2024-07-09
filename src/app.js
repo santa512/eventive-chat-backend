@@ -4,12 +4,11 @@ const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io')
 const cors = require('cors')
-
 const mongoose = require('mongoose')
 const router = require('./routes/routes')
-
 const userService = require('./services/userService')
 const messageService = require('./services/messageService')
+const eventService = require('./services/eventService')
 
 const app = express()
 // parse application/x-www-form-urlencoded
@@ -21,8 +20,6 @@ app.use(express.json())
 //database connect
 mongoose
   .connect(process.env.DB_HOST, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     ssl: true,
   })
   .then(() => {
@@ -66,8 +63,6 @@ const io = socketIo(server, {
 })
 
 app.use('/', router)
-// set static file
-// app.use(express.static(path.join(__dirname, 'public')))
 
 io.on('connection', (socket) => {
   socket.on('joinRoom', ({ userId }) => {
@@ -88,12 +83,6 @@ io.on('connection', (socket) => {
       })
     })
   })
-  // socket.on('joinPrivateChat', ({ senderId, receiverId }) => {
-  //   // const chatId = [senderId, receiverId].sort().join('_')
-  //   const chatId = senderId;
-  //   socket.join(chatId)
-  //   userService.updateUserStatus(senderId, 'online')
-  // })
   socket.on('changePrivacy', ({ userId, shareInfo }) => {
     userService.updateUserPrivacy(userId, shareInfo)
     socket.broadcast.emit('userStateChange', {
@@ -102,7 +91,6 @@ io.on('connection', (socket) => {
     })
   })
   socket.on('sendMessage', (msg) => {
-    // const chatId = [msg.sender, msg.receiver].sort().join('_')
     // Save the message document to the database
     messageService
       .addMessage(msg)
@@ -115,6 +103,8 @@ io.on('connection', (socket) => {
       })
   })
 })
+
+eventService.getEvents();
 
 const PORT = process.env.PORT || 443
 server.listen(PORT, () => {
