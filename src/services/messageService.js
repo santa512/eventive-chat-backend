@@ -7,6 +7,7 @@ async function addMessage(msg) {
       sender: sender,
       receiver: receiver,
       text: text,
+      read: false,
     })
     await message.save()
   } catch (error) {
@@ -59,64 +60,11 @@ async function getAllMessages() {
   }
 }
 
-async function getUsersSortedByLastMessage(userId) {
-  try {
-    const users = await Message.aggregate([
-      {
-        $match: {
-          $or: [{ sender: userId }, { receiver: userId }],
-        },
-      },
-      {
-        $sort: { time: -1 },
-      },
-      {
-        $group: {
-          _id: {
-            $cond: [{ $eq: ['$sender', userId] }, '$receiver', '$sender'],
-          },
-          lastMessageTime: { $first: '$time' },
-        },
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'user',
-        },
-      },
-      {
-        $unwind: '$user',
-      },
-      {
-        $sort: { lastMessageTime: -1 },
-      },
-      {
-        $project: {
-          _id: '$user._id',
-          userId: '$user.userId',
-          username: '$user.username',
-          userEmail: '$user.userEmail',
-          status: '$user.status',
-          lastMessageTime: 1,
-        },
-      },
-    ])
-
-    return users
-  } catch (error) {
-    console.error('Error fetching users:', error)
-    throw error
-  }
-}
-
 module.exports = {
   addMessage,
   removeMessage, //not used
   getMessageHistory, //not used
   getAllMessages, //not used
   getPrivateMessage,
-  getUsersSortedByLastMessage,  //incomplete
   getTotalMessageCount,
 }
