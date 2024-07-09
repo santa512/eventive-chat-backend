@@ -90,6 +90,16 @@ router.post('/messages', async (req, res) => {
   }
 })
 
+router.post('/messages/:msgId', async (req, res) => {
+  const msgId = req.params.msgId
+  try {
+    await messageService.updateMessage(msgId, req.body.text, req.body.read)
+    res.status(200).send('Message updated successfully')
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
 router.get('/messages', async (req, res) => {
   const senderId = req.query.senderId
   const receiverId = req.query.receiverId

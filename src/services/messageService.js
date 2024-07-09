@@ -60,6 +60,19 @@ async function getAllMessages() {
   }
 }
 
+async function updateMessage(msgId, updatedText, updatedStatus = true) {
+  try {
+    const message = await Message.findById(msgId);
+    if (message) {
+      message.text = updatedText;
+      message.read = updatedStatus;
+      await message.save();
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 module.exports = {
   addMessage,
   removeMessage, //not used
@@ -67,4 +80,5 @@ module.exports = {
   getAllMessages, //not used
   getPrivateMessage,
   getTotalMessageCount,
+  updateMessage
 }

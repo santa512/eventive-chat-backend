@@ -20,7 +20,7 @@ async function initEventAlert () {
             addMessage({
               sender: attendee.id, 
               receiver: attendee.id, 
-              text: `Hello, ${attendee.name}! Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}. Attendees: ${attendees.map(attendee => attendee.name).join(', ')}`});
+              text: `Hello, ${attendee.name}! Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`});
           });
       });
     });
