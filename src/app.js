@@ -9,6 +9,7 @@ const router = require('./routes/routes')
 const userService = require('./services/userService')
 const messageService = require('./services/messageService')
 const { initEventAlert } = require('./utils/notification')
+const { fetchEvents } = require('./services/eventService')
 
 const app = express()
 // parse application/x-www-form-urlencoded
@@ -25,7 +26,9 @@ mongoose
   .then(() => {
     console.log('MongoDB Connected...')
     userService.fetchUserlist()
-    initEventAlert()
+    fetchEvents().then((events) => {
+      initEventAlert()
+    })
   })
   .catch((err) => console.log(err))
 

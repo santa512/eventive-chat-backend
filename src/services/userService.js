@@ -156,6 +156,61 @@ async function setInitstatus(userId) {
   }
 }
 
+async function getEventAttendees(eventId) {
+  try {
+    const response = await axios.get(
+      process.env.EVENTIVE_API + `/orders`,
+      config
+    )
+    const passResponse = await axios.get(
+      process.env.EVENTIVE_API + `/event_buckets/65b85b1206c2b401d19abbd9/passes`,
+      config
+    )
+
+    const passes = passResponse.data.passes.map((pass) => pass.person)
+    // fetch ordered orderlist from Eventive
+    const orderlist = [
+      ...new Set(
+        response.data.orders
+          .filter(
+            (order) => order.event_bucket.name === process.env.EVENT_BUCKET
+          )
+          .filter(
+            (order) => order.tickets.some(item => item.event.id === eventId)
+          )
+          .map((order) => order.person)
+      ),
+    ]
+    
+    // filter repeated users
+    const uniqueOrderlist = Array.from(
+      new Set(orderlist.map((user) => JSON.stringify(user)))
+    ).map((user) => JSON.parse(user))
+
+    const adjustedUserList = uniqueOrderlist.map(user => ({
+      id: user.id,
+      name: user.details.name,
+      email: user.details.email,
+      phone_number: user.details.phone_number
+    }));
+
+    const combinedList = [...adjustedUserList, ...passes];
+    const uniqueList = combinedList.reduce((acc, current) => {
+      const x = acc.find(item => item.id === current.id);
+      if (!x) {
+        return acc.concat([current]);
+      } else {
+        return acc;
+      }
+    }, []);
+    
+    return uniqueList;
+
+  } catch (error) {
+    console.error('Error fetching event attendees:', error)
+  }
+}
+
 module.exports = {
   addUser,
   fetchUserlist,
@@ -166,4 +221,5 @@ module.exports = {
   updateUserPrivacy,
   deleteUser,
   setInitstatus,
+  getEventAttendees,
 }

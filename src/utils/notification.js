@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const moment = require('moment-timezone');
 const eventService = require('../services/eventService');
+const { getEventAttendees } = require('../services/userService');
 
 // A map to keep track of dynamically added tasks
 const tasks = {};
@@ -8,11 +9,14 @@ const tasks = {};
 async function initEventAlert () {
     const events = await eventService.getEvents();
     events.forEach((event) => {
-      const localTime = moment.tz(event.eventStartDate, "GMT-0400").tz(moment.tz.guess()); // Convert to local time zone
+      const localTime = moment.tz(event.eventStartDate, "GMT-0400").tz(moment.tz.guess()).subtract(10, 'minutes'); // Convert to local time zone
       const cronTime = `${localTime.minute()} ${localTime.hour()} ${localTime.date()} ${localTime.month() + 1} *`; // Cron format: minute hour day month *
-
+      
       addTask(event.eventName, cronTime, () => {
-        console.log(`Event ${event.eventName} is starting!`);
+        console.log(`Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`);
+        getEventAttendees(event.eventId).then((attendees) => {
+            console.log(`Attendees: ${attendees.map(attendee => attendee.name).join(', ')}`);
+          });
       });
     });
 }

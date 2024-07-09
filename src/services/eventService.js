@@ -22,6 +22,7 @@ async function fetchEvents() {
       eventName: event.name,
       eventStartDate: new Date(event.start_time),
       eventEndDate: new Date(event.end_time),
+      location: event.location,
     }))
 
     for (const event of events) {

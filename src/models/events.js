@@ -7,6 +7,7 @@ const EventSchema = new mongoose.Schema(
     eventBucket: { type: String, required: true },
     eventStartDate: { type: Date, required: true },
     eventEndDate: { type: Date, required: true },
+    location: { type: String, required: false },
     // add other fields as needed
   },
   { timestamps: true }
