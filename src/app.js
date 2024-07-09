@@ -8,7 +8,7 @@ const mongoose = require('mongoose')
 const router = require('./routes/routes')
 const userService = require('./services/userService')
 const messageService = require('./services/messageService')
-const eventService = require('./services/eventService')
+const { initEventAlert } = require('./utils/notification')
 
 const app = express()
 // parse application/x-www-form-urlencoded
@@ -25,6 +25,7 @@ mongoose
   .then(() => {
     console.log('MongoDB Connected...')
     userService.fetchUserlist()
+    initEventAlert()
   })
   .catch((err) => console.log(err))
 
@@ -103,8 +104,6 @@ io.on('connection', (socket) => {
       })
   })
 })
-
-eventService.getEvents();
 
 const PORT = process.env.PORT || 443
 server.listen(PORT, () => {

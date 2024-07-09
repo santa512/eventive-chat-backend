@@ -7,11 +7,14 @@ const tasks = {};
 
 async function initEventAlert () {
     const events = await eventService.getEvents();
-    for (const event of events) {
-        const eventTime = moment(event.time).tz('America/New_York');
-        const eventDate = eventTime.format('YYYY-MM-DD');
-        const eventTimeOfDay = eventTime.format('HH:mm');
-    }
+    events.forEach((event) => {
+      const localTime = moment.tz(event.eventStartDate, "GMT-0400").tz(moment.tz.guess()); // Convert to local time zone
+      const cronTime = `${localTime.minute()} ${localTime.hour()} ${localTime.date()} ${localTime.month() + 1} *`; // Cron format: minute hour day month *
+
+      addTask(event.eventName, cronTime, () => {
+        console.log(`Event ${event.eventName} is starting!`);
+      });
+    });
 }
 
 // Function to add a new task
@@ -40,6 +43,7 @@ const removeTask = (taskName) => {
 
 // Export the functions
 module.exports = {
+  initEventAlert,
   addTask,
   removeTask,
 };

@@ -9,32 +9,42 @@ const config = {
     },
   }
 
-  async function getEvents() {
-    try {
-      const response = await axios.get(
-        process.env.EVENTIVE_API + `/event_buckets/${process.env.EVENT_BUCKET_ID}/events`,
-        config
-      )
-      
-      const events = response.data.events.map((event) => ({
-        eventId: event.id,
-        eventBucket: event.event_bucket,
-        eventName: event.name,
-        eventStartDate: new Date(event.start_time),
-        eventEndDate: new Date(event.end_time),
-      }))
+async function fetchEvents() {
+  try {
+    const response = await axios.get(
+      process.env.EVENTIVE_API + `/event_buckets/${process.env.EVENT_BUCKET_ID}/events`,
+      config
+    )
+    
+    const events = response.data.events.map((event) => ({
+      eventId: event.id,
+      eventBucket: event.event_bucket,
+      eventName: event.name,
+      eventStartDate: new Date(event.start_time),
+      eventEndDate: new Date(event.end_time),
+    }))
 
-      for (const event of events) {
-        const newEvent = new Event(event);
-        await newEvent.save();
-      }
-
-      return response.data.events
-    } catch (error) {
-      console.error('Error fetching events:', error)
+    for (const event of events) {
+      const newEvent = new Event(event);
+      await newEvent.save();
     }
-  }
 
-  module.exports = {
-    getEvents,
+    return response.data.events
+  } catch (error) {
+    console.error('Error fetching events:', error)
   }
+}
+
+async function getEvents() {
+  try {
+    const events = Event.find();
+    return events;
+  } catch (error) {
+    console.error('Error getting events:', error);
+  }
+}
+
+module.exports = {
+  fetchEvents,
+  getEvents,
+}
