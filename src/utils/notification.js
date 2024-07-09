@@ -16,12 +16,15 @@ async function initEventAlert () {
       addTask(event.eventName, cronTime, () => {
         console.log(`Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`);
         getEventAttendees(event.eventId).then((attendees) => {
+          //in-app notification
           attendees.forEach(attendee => {
             addMessage({
               sender: attendee.id, 
               receiver: attendee.id, 
               text: `Hello, ${attendee.name}! Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`});
           });
+
+          //SMS notification
       });
     });
 })}

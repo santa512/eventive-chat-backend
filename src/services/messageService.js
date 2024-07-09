@@ -36,6 +36,20 @@ async function getTotalMessageCount(senderId, receiverId) {
   })
 }
 
+async function getUnreadMessageCount(senderId, receiverId) {
+  return Message.countDocuments({
+    $and: [
+      {
+        $or: [
+          { sender: senderId, receiver: receiverId },
+          { sender: receiverId, receiver: senderId }
+        ]
+      },
+      { read: false }
+    ]
+  });
+}
+
 async function removeMessage() {
   try {
     // Add code for removing a message
@@ -80,5 +94,6 @@ module.exports = {
   getAllMessages, //not used
   getPrivateMessage,
   getTotalMessageCount,
-  updateMessage
+  getUnreadMessageCount,
+  updateMessage,
 }
