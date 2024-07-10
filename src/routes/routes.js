@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 // get all ordered users
 router.get('/users', async (req, res) => {
   try {
-    res.json(await userService.getPublicUsers())
+    res.json(await userService.getPublicUsers(req.query.userId))
   } catch (error) {
     res.status(500).send(error)
   }

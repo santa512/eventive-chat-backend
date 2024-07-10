@@ -98,10 +98,16 @@ async function getAllUsers() {
   }
 }
 
-async function getPublicUsers() {
+async function getPublicUsers(userId) {
   try {
-    const users = await User.find({ shareInfo: true })
-    return users
+    const user = await User.findOne({ userId: userId, shareInfo: true });
+    if (user) {
+      // If the user's shareInfo is true, get all users where shareInfo is true
+      return await User.find({ shareInfo: true });
+    } else {
+      // If the user's shareInfo is not true, get only the user with the given userId
+      return await User.find({ userId: userId });
+    }
   } catch (error) {
     console.error('Error fetching public users:', error)
   }
