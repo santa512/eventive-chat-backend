@@ -10,6 +10,7 @@ const userService = require('./services/userService')
 const messageService = require('./services/messageService')
 const { initEventAlert } = require('./utils/notification')
 const { fetchEvents } = require('./services/eventService')
+const io1 = require('socket.io-client');
 
 const app = express()
 // parse application/x-www-form-urlencoded
@@ -17,20 +18,6 @@ app.use(express.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(express.json())
-
-//database connect
-mongoose
-  .connect(process.env.DB_HOST, {
-    ssl: true,
-  })
-  .then(() => {
-    console.log('MongoDB Connected...')
-    userService.fetchUserlist()
-    fetchEvents().then((events) => {
-      initEventAlert()
-    })
-  })
-  .catch((err) => console.log(err))
 
 //production env
 app.use(
@@ -71,6 +58,7 @@ app.use('/', router)
 io.on('connection', (socket) => {
   socket.on('joinRoom', ({ userId }) => {
     const chatId = userId
+    console.log('userJoined:' + userId);
     socket.join(chatId)
     userService.updateUserStatus(userId, 'online')
     socket.broadcast.emit('userStateChange', {
@@ -80,7 +68,6 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
       userService.updateUserStatus(userId, 'offline')
-      console.log('user left : ' + userId)
       socket.broadcast.emit('userStateChange', {
         userId: userId,
         status: 'offline',
@@ -96,17 +83,55 @@ io.on('connection', (socket) => {
   })
   socket.on('sendMessage', (msg) => {
     // Save the message document to the database
+    console.log('send message:' + msg);
     messageService
       .addMessage(msg)
       .then(() => {
         io.to(msg.receiver).emit('message', msg)
-        io.to(msg.sender).emit('message', msg)
+        if(msg.sender != msg.receiver)
+          io.to(msg.sender).emit('message', msg)
       })
       .catch((err) => {
         console.error(err)
       })
   })
 })
+
+//database connect
+mongoose
+  .connect(process.env.DB_HOST, {
+    ssl: true,
+  })
+  .then(() => {
+    console.log('MongoDB Connected...')
+    userService.fetchUserlist()
+    fetchEvents().then((events) => {
+      initEventAlert((attendees, event) => {
+        //in-app notification
+        const socket = io1('https://eventive-chat-backend.onrender.com', {
+          //production env
+          withCredentials: true,
+          extraHeaders: {
+            'Content-Type': 'application/json',
+          },
+          transports: ['websocket', 'polling'],
+        });
+        socket.on('connect', () => {
+          console.log('Socket connection established');
+          socket.emit('joinRoom', '667525513fbd75006504d59f');
+
+          attendees.forEach(attendee => {
+            const msg = {
+            sender: attendee.id, 
+            receiver: attendee.id, 
+            text: `Hello, ${attendee.name}! Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`}; 
+            socket.emit('sendMessage', msg);
+          });
+        });
+      })
+    })
+  })
+  .catch((err) => console.log(err))
 
 const PORT = process.env.PORT || 443
 server.listen(PORT, () => {

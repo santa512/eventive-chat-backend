@@ -16,6 +16,39 @@ async function addMessage(msg) {
 }
 
 async function getPrivateMessage(senderId, receiverId, count = 0, limit = 10) {
+  Message.find({
+    $or: [
+      { sender: senderId, receiver: receiverId },
+      { sender: receiverId, receiver: senderId },
+    ],
+  })
+  .sort('-time')
+  .skip(count)
+  .limit(limit)
+  .then(messages => {
+    // Assuming messages have been successfully fetched, now mark them as read
+    Message.updateMany({
+      $or: [
+        { sender: senderId, receiver: receiverId },
+        { sender: receiverId, receiver: senderId },
+      ],
+      read: false // This ensures only unread messages are updated
+    }, {
+      $set: { read: true }
+    })
+    .then(updateResult => {
+      // Handle success, maybe log how many messages were marked as read
+      console.log(updateResult.modifiedCount + ' messages marked as read');
+    })
+    .catch(err => {
+      // Handle possible update errors
+      console.error('Error marking messages as read:', err);
+    });
+  })
+  .catch(err => {
+    // Handle errors from the initial message fetch
+    console.error('Error fetching messages:', err);
+  });
   return Message.find({
     $or: [
       { sender: senderId, receiver: receiverId },

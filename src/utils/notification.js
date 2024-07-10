@@ -3,11 +3,10 @@ const moment = require('moment-timezone');
 const eventService = require('../services/eventService');
 const { getEventAttendees } = require('../services/userService');
 const { addMessage } = require('../services/messageService');
-
 // A map to keep track of dynamically added tasks
 const tasks = {};
 
-async function initEventAlert () {
+async function initEventAlert (callback) {
     const events = await eventService.getEvents();
     events.forEach((event) => {
       const localTime = moment.tz(event.eventStartDate, "GMT-0400").tz(moment.tz.guess()).subtract(10, 'minutes'); // Convert to local time zone
@@ -16,14 +15,8 @@ async function initEventAlert () {
       addTask(event.eventName, cronTime, () => {
         console.log(`Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`);
         getEventAttendees(event.eventId).then((attendees) => {
-          //in-app notification
-          attendees.forEach(attendee => {
-            addMessage({
-              sender: attendee.id, 
-              receiver: attendee.id, 
-              text: `Hello, ${attendee.name}! Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`});
-          });
-
+          if(typeof callback === 'function')
+            callback(attendees, event);
           //SMS notification
       });
     });
