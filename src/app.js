@@ -14,7 +14,7 @@ const { convertToE164 } = require('./utils/phoneUtil')
 const io1 = require('socket.io-client');
 const TWILIO_ACCOUNT_SID = 'ACe3ecb46feb71e020885e1e895f58607a';
 const TWILIO_AUTH_TOKEN = '5a6c855bedab2a285b1c9ad01714e825';
-const client = require('twilio')(accountSid, authToken);
+const client = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
 const app = express()
 // parse application/x-www-form-urlencoded
@@ -111,7 +111,7 @@ mongoose
     fetchEvents().then((events) => {
       initEventAlert((attendees, event) => {
         //in-app notification
-        const socket = io1('http://localhost:443', {
+        const socket = io1('https://eventive-chat-backend.onrender.com', {
           //production env
           withCredentials: true,
           extraHeaders: {
