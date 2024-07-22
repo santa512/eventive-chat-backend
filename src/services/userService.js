@@ -217,6 +217,18 @@ async function getEventAttendees(eventId) {
   }
 }
 
+async function updateUserPhoneNum(userId, phoneNumber) {
+  try {
+    const user = await findUserById(userId)
+    if (!user) return false
+    await User.updateOne({ _id: user._id }, { $set: { phoneNumber: phoneNumber } })
+    return true
+  } catch (error) {
+    console.error('Error updating user phone number:', error)
+    return false
+  }
+}
+
 module.exports = {
   addUser,
   fetchUserlist,
@@ -228,4 +240,5 @@ module.exports = {
   deleteUser,
   setInitstatus,
   getEventAttendees,
+  updateUserPhoneNum,
 }

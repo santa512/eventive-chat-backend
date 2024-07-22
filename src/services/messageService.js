@@ -1,13 +1,15 @@
 const Message = require('../models/messages')
 
 async function addMessage(msg) {
-  const { sender, receiver, text } = msg
+  const { sender, receiver, text, autodelete } = msg
   try {
     const message = new Message({
       sender: sender,
       receiver: receiver,
       text: text,
       read: false,
+      autodelete: autodelete,
+      createdAt: autodelete ? new Date() : undefined,
     })
     await message.save()
   } catch (error) {
@@ -83,9 +85,10 @@ async function getUnreadMessageCount(senderId, receiverId) {
   });
 }
 
-async function removeMessage() {
+async function removeMessage(id) {
   try {
     // Add code for removing a message
+    await Message.findByIdAndRemove(id);
   } catch (error) {
     console.error(error)
   }
@@ -122,7 +125,7 @@ async function updateMessage(msgId, updatedText, updatedStatus = true) {
 
 module.exports = {
   addMessage,
-  removeMessage, //not used
+  removeMessage,
   getMessageHistory, //not used
   getAllMessages, //not used
   getPrivateMessage,

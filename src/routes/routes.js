@@ -78,6 +78,15 @@ router.post('/userinit', async (req, res) => {
     res.status(500).status(error)
   }
 })
+
+router.post('/addphonenum/:userId/', async (req, res) => {
+  try {
+    await userService.updateUserPhoneNum(req.params.userId, req.body.phoneNumber)
+    res.status(200).send('Phone number added successfully')
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
 // --- User action ending ---
 
 // --- Message action beginning ---

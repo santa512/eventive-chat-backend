@@ -10,7 +10,11 @@ const userService = require('./services/userService')
 const messageService = require('./services/messageService')
 const { initEventAlert } = require('./utils/notification')
 const { fetchEvents } = require('./services/eventService')
+const { convertToE164 } = require('./utils/phoneUtil')
 const io1 = require('socket.io-client');
+const TWILIO_ACCOUNT_SID = 'ACe3ecb46feb71e020885e1e895f58607a';
+const TWILIO_AUTH_TOKEN = '5a6c855bedab2a285b1c9ad01714e825';
+const client = require('twilio')(accountSid, authToken);
 
 const app = express()
 // parse application/x-www-form-urlencoded
@@ -83,10 +87,9 @@ io.on('connection', (socket) => {
   })
   socket.on('sendMessage', (msg) => {
     // Save the message document to the database
-    console.log('send message:' + msg);
     messageService
-      .addMessage(msg)
-      .then(() => {
+    .addMessage(msg)
+    .then(() => {
         io.to(msg.receiver).emit('message', msg)
         if(msg.sender != msg.receiver)
           io.to(msg.sender).emit('message', msg)
@@ -97,7 +100,7 @@ io.on('connection', (socket) => {
   })
 })
 
-//database connect
+// database connect
 mongoose
   .connect(process.env.DB_HOST, {
     ssl: true,
@@ -108,7 +111,7 @@ mongoose
     fetchEvents().then((events) => {
       initEventAlert((attendees, event) => {
         //in-app notification
-        const socket = io1('https://eventive-chat-backend.onrender.com', {
+        const socket = io1('http://localhost:443', {
           //production env
           withCredentials: true,
           extraHeaders: {
@@ -118,14 +121,26 @@ mongoose
         });
         socket.on('connect', () => {
           console.log('Socket connection established');
-          socket.emit('joinRoom', '667525513fbd75006504d59f');
-
           attendees.forEach(attendee => {
             const msg = {
             sender: attendee.id, 
             receiver: attendee.id, 
-            text: `Hello, ${attendee.name}! Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`}; 
+            text: `Hello, ${attendee.name}! Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`,
+            autodelete: true,
+          }; 
             socket.emit('sendMessage', msg);
+            //SMS notification
+            if(attendee.phoneNumber) {
+              const phonNum = convertToE164(attendee.phoneNumber);
+              client.messages
+              .create({
+                body: `Hello, ${attendee.name}! Just a quick reminder that ${event.eventName} will be starting in 10 minutes at ${event.location}.`,
+                from: '+18777804236',
+                to: phonNum,
+              })
+              .then((message) => console.log('SMS sent: ', message.sid))
+              .catch((err) => console.error(err));
+            }
           });
         });
       })
