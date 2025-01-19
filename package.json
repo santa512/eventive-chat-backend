@@ -23,7 +23,7 @@
     "google-libphonenumber": "^3.2.37",
     "https-browserify": "^1.0.0",
     "moment-timezone": "^0.5.45",
-    "mongoose": "^8.4.1",
+    "mongoose": "^8.9.5",
     "node-cron": "^3.0.3",
     "path-browserify": "^1.0.1",
     "querystring-es3": "^0.2.1",
